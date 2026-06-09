@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class BookController {
 
     @PostMapping
     public ResponseEntity<BookDto> create(
-            @RequestBody BookDto dto,
+            @Valid @RequestBody BookDto dto,
             @RequestHeader("X-User-Id") Long requesterId) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(bookService.create(dto, requesterId));

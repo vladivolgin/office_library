@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.FetchType;
+
 
 import java.time.LocalDateTime;
 
@@ -39,6 +42,8 @@ public class User {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
     }
+    @OneToOne(mappedBy = "takenByUser", fetch = FetchType.LAZY)
+    private Book takenBook;
 
     @PreUpdate
     protected void onUpdate() {

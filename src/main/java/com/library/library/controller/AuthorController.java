@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
+
+
 import java.util.List;
 
 @RestController
@@ -33,7 +36,7 @@ public class AuthorController {
     // POST /api/authors — создать автора
     @PostMapping
     public ResponseEntity<AuthorDto> create(
-            @RequestBody AuthorDto dto,
+            @Valid @RequestBody AuthorDto dto,
             @RequestHeader("X-User-Id") Long requesterId) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(authorService.create(dto, requesterId));
