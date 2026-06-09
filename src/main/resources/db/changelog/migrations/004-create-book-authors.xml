@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="004-create-book-authors" author="dev">
+        <!--
+            Связующая таблица Many-to-Many между books и authors.
+            Составной первичный ключ (book_id, author_id) исключает дубли.
+        -->
+        <createTable tableName="book_authors"
+                     remarks="Связь Many-to-Many: книга — авторы">
+
+            <column name="book_id" type="BIGINT">
+                <constraints nullable="false"
+                             foreignKeyName="fk_book_authors_book"
+                             references="books(id)"/>
+            </column>
+
+            <column name="author_id" type="BIGINT">
+                <constraints nullable="false"
+                             foreignKeyName="fk_book_authors_author"
+                             references="authors(id)"/>
+            </column>
+
+        </createTable>
+
+        <!-- Составной PK: одна пара book_id + author_id может быть только один раз -->
+        <addPrimaryKey
+                tableName="book_authors"
+                columnNames="book_id, author_id"
+                constraintName="pk_book_authors"/>
+
+        <!-- Обратный индекс: быстрый поиск всех книг конкретного автора -->
+        <createIndex indexName="idx_book_authors_author_id" tableName="book_authors">
+            <column name="author_id"/>
+        </createIndex>
+
+    </changeSet>
+
+</databaseChangeLog>

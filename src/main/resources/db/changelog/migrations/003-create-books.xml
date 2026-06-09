@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="003-create-books" author="dev">
+        <createTable tableName="books"
+                     remarks="Таблица книг библиотеки">
+
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="title" type="VARCHAR(500)"
+                    remarks="Название книги (обязательное)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="publish_year" type="INTEGER"
+                    remarks="Год издания книги">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="genre" type="VARCHAR(100)"
+                    remarks="Жанр книги">
+                <constraints nullable="true"/>
+            </column>
+
+            <!--
+                taken_by_user_id — ID пользователя, который взял книгу.
+                NULL означает, что книга свободна.
+                FK на таблицу users.
+            -->
+            <column name="taken_by_user_id" type="BIGINT"
+                    remarks="ID пользователя, у которого книга на руках (NULL = свободна)">
+                <constraints nullable="true"
+                             foreignKeyName="fk_books_taken_by_user"
+                             references="users(id)"/>
+            </column>
+
+            <column name="taken_at" type="TIMESTAMP"
+                    remarks="Дата и время выдачи книги">
+                <constraints nullable="true"/>
+            </column>
+
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="NOW()">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+
+        <!-- Индекс для быстрого поиска по названию (case-insensitive через ILIKE) -->
+        <sql>
+            CREATE INDEX idx_books_title_lower ON books (LOWER(title));
+        </sql>
+
+        <!-- Индекс для быстрого поиска свободных/занятых книг -->
+        <createIndex indexName="idx_books_taken_by_user_id" tableName="books">
+            <column name="taken_by_user_id"/>
+        </createIndex>
+
+    </changeSet>
+
+</databaseChangeLog>

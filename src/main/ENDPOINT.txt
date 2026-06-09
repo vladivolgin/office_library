@@ -1,0 +1,124 @@
+
+ ОФИСНАЯ БИБЛИОТЕКА — API ЭНДПОИНТЫ
+
+# Base URL: http://localhost:8080
+
+# 👤 USERS — Пользователи
+
+# Создать READER
+curl -X POST http://localhost:8080/api/users \
+  -H "Content-Type: application/json" \
+  -d '{"fullName":"Иван Иванов","birthYear":1990,"role":"READER"}'
+
+# Создать EDITOR
+curl -X POST http://localhost:8080/api/users \
+  -H "Content-Type: application/json" \
+  -d '{"fullName":"Админ","birthYear":1985,"role":"EDITOR"}'
+
+# Получить всех пользователей
+curl http://localhost:8080/api/users
+
+# Получить пользователя по ID
+curl http://localhost:8080/api/users/1
+
+# Обновить пользователя
+curl -X PUT http://localhost:8080/api/users/1 \
+  -H "Content-Type: application/json" \
+  -d '{"fullName":"Иван Петров","birthYear":1990,"role":"EDITOR"}'
+
+# Удалить пользователя
+curl -X DELETE http://localhost:8080/api/users/1
+
+# ✍️ AUTHORS — Авторы (создание/изменение/удаление — только EDITOR)
+
+# Получить всех авторов (доступно всем)
+curl http://localhost:8080/api/authors
+
+# Получить автора по ID (доступно всем)
+curl http://localhost:8080/api/authors/1
+
+# Поиск автора по имени (доступно всем)
+curl "http://localhost:8080/api/authors/search?name=толстой"
+
+# Создать автора (только EDITOR, X-User-Id — id пользователя с ролью EDITOR)
+curl -X POST http://localhost:8080/api/authors \
+  -H "Content-Type: application/json" \
+  -H "X-User-Id: 1" \
+  -d '{"fullName":"Лев Толстой","birthYear":1828,"biography":"Русский писатель"}'
+
+# Обновить автора (только EDITOR)
+curl -X PUT http://localhost:8080/api/authors/1 \
+  -H "Content-Type: application/json" \
+  -H "X-User-Id: 1" \
+  -d '{"fullName":"Лев Николаевич Толстой","birthYear":1828,"biography":"Великий русский писатель"}'
+
+# Удалить автора (только EDITOR)
+curl -X DELETE http://localhost:8080/api/authors/1 \
+  -H "X-User-Id: 1"
+
+
+
+# 📖 BOOKS — Книги (создание/изменение/удаление — только EDITOR)
+
+# Получить все книги (доступно всем)
+curl http://localhost:8080/api/books
+
+# Получить книгу по ID (доступно всем)
+curl http://localhost:8080/api/books/1
+
+# Поиск книги по названию (доступно всем)
+curl "http://localhost:8080/api/books/search?title=война"
+
+# Создать книгу (только EDITOR)
+curl -X POST http://localhost:8080/api/books \
+  -H "Content-Type: application/json" \
+  -H "X-User-Id: 1" \
+  -d '{"title":"Война и мир","publishYear":1869,"genre":"Роман"}'
+
+# Обновить книгу (только EDITOR)
+curl -X PUT http://localhost:8080/api/books/1 \
+  -H "Content-Type: application/json" \
+  -H "X-User-Id: 1" \
+  -d '{"title":"Война и мир","publishYear":1869,"genre":"Исторический роман"}'
+
+# Удалить книгу (только EDITOR)
+curl -X DELETE http://localhost:8080/api/books/1 \
+  -H "X-User-Id: 1"
+
+# Привязать автора к книге (только EDITOR)
+# /api/books/{bookId}/authors/{authorId}
+curl -X POST http://localhost:8080/api/books/1/authors/1 \
+  -H "X-User-Id: 1"
+
+# Взять книгу (доступно всем, userId — кто берёт)
+curl -X POST "http://localhost:8080/api/books/1/take?userId=2"
+
+# Вернуть книгу (доступно всем)
+curl -X POST http://localhost:8080/api/books/1/return
+
+
+
+# 🔥 ПРОВЕРКА ОШИБОК
+
+
+# 404 — объект не найден
+curl http://localhost:8080/api/authors/999
+
+# 409 — книга уже занята (сначала займи, потом повтори)
+curl -X POST "http://localhost:8080/api/books/1/take?userId=1"
+curl -X POST "http://localhost:8080/api/books/1/take?userId=1"
+
+# 409 — вернуть свободную книгу
+curl -X POST http://localhost:8080/api/books/1/return
+curl -X POST http://localhost:8080/api/books/1/return
+
+# 403 — READER пытается создать автора
+curl -X POST http://localhost:8080/api/authors \
+  -H "Content-Type: application/json" \
+  -H "X-User-Id: 4" \
+  -d '{"fullName":"Чехов","birthYear":1860,"biography":"Русский писатель"}'
+
+
+Поменять коды с сетевых на серверные
+добавить поиск книги по части названия
+
