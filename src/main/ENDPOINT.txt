@@ -1,6 +1,11 @@
 
  ОФИСНАЯ БИБЛИОТЕКА — API ЭНДПОИНТЫ
 
+ # Установить jq через Homebrew
+ brew install jq
+ curl http://localhost:8080/api/books | jq - структурированный вывод
+
+
 # Base URL: http://localhost:8080
 
 # 👤 USERS — Пользователи
