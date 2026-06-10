@@ -14,6 +14,11 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
 
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+
 logging:
   level:
     org.hibernate.SQL: DEBUG

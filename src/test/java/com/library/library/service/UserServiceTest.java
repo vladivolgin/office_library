@@ -48,18 +48,6 @@ class UserServiceTest {
     }
 
     @Test
-    void create_savesUser() {
-        UserDto dto = new UserDto(null, "Иван Иванов", 1990, UserRole.READER, null);
-        when(userRepository.save(any(User.class))).thenReturn(user);
-
-        UserDto result = userService.create(dto);
-
-        assertThat(result.fullName()).isEqualTo("Иван Иванов");
-        assertThat(result.birthYear()).isEqualTo(1990);
-        assertThat(result.role()).isEqualTo(UserRole.READER);
-    }
-
-    @Test
     void update_updatesFields() {
         UserDto dto = new UserDto(null, "Пётр Петров", 1985, UserRole.EDITOR, null);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));

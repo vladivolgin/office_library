@@ -35,13 +35,6 @@ public class UserService {
         return UserMapper.toDto(findById(id));
     }
 
-    // Создать пользователя
-    @Transactional
-    public UserDto create(UserDto dto) {
-        User user = UserMapper.toEntity(dto);
-        return UserMapper.toDto(userRepository.save(user));
-    }
-
     // Обновить пользователя
     @Transactional
     public UserDto update(Long id, UserDto dto) {

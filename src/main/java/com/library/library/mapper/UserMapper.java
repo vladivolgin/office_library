@@ -23,11 +23,4 @@ public class UserMapper {
         );
     }
 
-    public static User toEntity(UserDto dto) {
-        User u = new User();
-        u.setFullName(dto.fullName());
-        u.setBirthYear(dto.birthYear());
-        u.setRole(dto.role());
-        return u;
-    }
 }
