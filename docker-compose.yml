@@ -1,17 +1,17 @@
 services:
   db:
-    image: postgres:17
+    image: postgres:${POSTGRES_VERSION}
     container_name: library_db
     environment:
-      POSTGRES_DB: office_library
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
     ports:
-      - "5433:5432"
+      - "${DB_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -20,11 +20,11 @@ services:
     build: .
     container_name: library_app
     ports:
-      - "8081:8080"
+      - "${APP_PORT}:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/office_library
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: admin123
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASS}
     depends_on:
       db:
         condition: service_healthy

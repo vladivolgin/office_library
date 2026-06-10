@@ -9,5 +9,6 @@
     <include file="db/changelog/migrations/002-create-users.xml"/>
     <include file="db/changelog/migrations/003-create-books.xml"/>
     <include file="db/changelog/migrations/004-create-book-authors.xml"/>
+    <include file="db/changelog/migrations/005-add-user-credentials.xml"/>
 
 </databaseChangeLog>

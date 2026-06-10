@@ -5,8 +5,8 @@ import com.library.library.entity.Author;
 import com.library.library.exception.NotFoundException;
 import com.library.library.mapper.AuthorMapper;
 import com.library.library.repository.AuthorRepository;
-import com.library.library.security.RoleChecker;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +17,6 @@ import java.util.List;
 public class AuthorService {
 
     private final AuthorRepository authorRepository;
-    private final RoleChecker roleChecker;
 
     public List<AuthorDto> findAll() {
         return authorRepository.findAll().stream()
@@ -40,16 +39,16 @@ public class AuthorService {
                 .toList();
     }
 
+    @PreAuthorize("hasRole('EDITOR')")
     @Transactional
-    public AuthorDto create(AuthorDto dto, Long requesterId) {
-        roleChecker.requireEditor(requesterId);
+    public AuthorDto create(AuthorDto dto) {
         Author author = AuthorMapper.toEntity(dto);
         return AuthorMapper.toDto(authorRepository.save(author));
     }
 
+    @PreAuthorize("hasRole('EDITOR')")
     @Transactional
-    public AuthorDto update(Long id, AuthorDto dto, Long requesterId) {
-        roleChecker.requireEditor(requesterId);
+    public AuthorDto update(Long id, AuthorDto dto) {
         Author author = findById(id);
         author.setFullName(dto.fullName());
         author.setBirthYear(dto.birthYear());
@@ -57,9 +56,9 @@ public class AuthorService {
         return AuthorMapper.toDto(authorRepository.save(author));
     }
 
+    @PreAuthorize("hasRole('EDITOR')")
     @Transactional
-    public void delete(Long id, Long requesterId) {
-        roleChecker.requireEditor(requesterId);
+    public void delete(Long id) {
         findById(id);
         authorRepository.deleteById(id);
     }

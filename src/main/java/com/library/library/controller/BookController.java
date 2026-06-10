@@ -33,35 +33,25 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<BookDto> create(
-            @Valid @RequestBody BookDto dto,
-            @RequestHeader("X-User-Id") Long requesterId) {
+    public ResponseEntity<BookDto> create(@Valid @RequestBody BookDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(bookService.create(dto, requesterId));
+                .body(bookService.create(dto));
     }
 
     @PutMapping("/{id}")
-    public BookDto update(
-            @PathVariable Long id,
-            @RequestBody BookDto dto,
-            @RequestHeader("X-User-Id") Long requesterId) {
-        return bookService.update(id, dto, requesterId);
+    public BookDto update(@PathVariable Long id, @RequestBody BookDto dto) {
+        return bookService.update(id, dto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(
-            @PathVariable Long id,
-            @RequestHeader("X-User-Id") Long requesterId) {
-        bookService.delete(id, requesterId);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        bookService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{bookId}/authors/{authorId}")
-    public BookDto addAuthor(
-            @PathVariable Long bookId,
-            @PathVariable Long authorId,
-            @RequestHeader("X-User-Id") Long requesterId) {
-        return bookService.addAuthor(bookId, authorId, requesterId);
+    public BookDto addAuthor(@PathVariable Long bookId, @PathVariable Long authorId) {
+        return bookService.addAuthor(bookId, authorId);
     }
 
     @PostMapping("/{bookId}/take")

@@ -10,8 +10,8 @@ import com.library.library.mapper.BookMapper;
 import com.library.library.repository.AuthorRepository;
 import com.library.library.repository.BookRepository;
 import com.library.library.repository.UserRepository;
-import com.library.library.security.RoleChecker;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +25,6 @@ public class BookService {
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
     private final UserRepository userRepository;
-    private final RoleChecker roleChecker;
 
     public List<BookDto> findAll() {
         return bookRepository.findAll().stream()
@@ -48,16 +47,16 @@ public class BookService {
                 .toList();
     }
 
+    @PreAuthorize("hasRole('EDITOR')")
     @Transactional
-    public BookDto create(BookDto dto, Long requesterId) {
-        roleChecker.requireEditor(requesterId);
+    public BookDto create(BookDto dto) {
         Book book = BookMapper.toEntity(dto);
         return BookMapper.toDto(bookRepository.save(book));
     }
 
+    @PreAuthorize("hasRole('EDITOR')")
     @Transactional
-    public BookDto update(Long id, BookDto dto, Long requesterId) {
-        roleChecker.requireEditor(requesterId);
+    public BookDto update(Long id, BookDto dto) {
         Book book = findById(id);
         book.setTitle(dto.title());
         book.setPublishYear(dto.publishYear());
@@ -65,16 +64,16 @@ public class BookService {
         return BookMapper.toDto(bookRepository.save(book));
     }
 
+    @PreAuthorize("hasRole('EDITOR')")
     @Transactional
-    public void delete(Long id, Long requesterId) {
-        roleChecker.requireEditor(requesterId);
+    public void delete(Long id) {
         findById(id);
         bookRepository.deleteById(id);
     }
 
+    @PreAuthorize("hasRole('EDITOR')")
     @Transactional
-    public BookDto addAuthor(Long bookId, Long authorId, Long requesterId) {
-        roleChecker.requireEditor(requesterId);
+    public BookDto addAuthor(Long bookId, Long authorId) {
         Book book = findById(bookId);
         Author author = authorRepository.findById(authorId)
                 .orElseThrow(() -> new NotFoundException("Автор не найден: " + authorId));

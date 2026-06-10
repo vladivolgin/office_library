@@ -35,26 +35,19 @@ public class AuthorController {
     }
     // POST /api/authors — создать автора
     @PostMapping
-    public ResponseEntity<AuthorDto> create(
-            @Valid @RequestBody AuthorDto dto,
-            @RequestHeader("X-User-Id") Long requesterId) {
+    public ResponseEntity<AuthorDto> create(@Valid @RequestBody AuthorDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(authorService.create(dto, requesterId));
+                .body(authorService.create(dto));
     }
     // PUT /api/authors/1 — обновить автора
     @PutMapping("/{id}")
-    public AuthorDto update(
-            @PathVariable Long id,
-            @RequestBody AuthorDto dto,
-            @RequestHeader("X-User-Id") Long requesterId) {
-        return authorService.update(id, dto, requesterId);
+    public AuthorDto update(@PathVariable Long id, @RequestBody AuthorDto dto) {
+        return authorService.update(id, dto);
     }
     // DELETE /api/authors/1 — удалить автора
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(
-            @PathVariable Long id,
-            @RequestHeader("X-User-Id") Long requesterId) {
-        authorService.delete(id, requesterId);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        authorService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }
