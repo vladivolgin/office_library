@@ -1,10 +1,11 @@
 package com.library.library.service;
+import com.library.library.service.impl.UserService;
 
 import com.library.library.dto.UserDto;
-import com.library.library.entity.User;
-import com.library.library.entity.UserRole;
+import com.library.library.dao.entity.User;
+import com.library.library.common.UserRole;
 import com.library.library.exception.NotFoundException;
-import com.library.library.repository.UserRepository;
+import com.library.library.dao.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

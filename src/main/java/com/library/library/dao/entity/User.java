@@ -1,22 +1,24 @@
-package com.library.library.entity;
+package com.library.library.dao.entity;
 
+import com.library.library.common.UserRole;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.FetchType;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
-@Table(name = "authors")
+@Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Author {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,11 +30,15 @@ public class Author {
     @Column(name = "birth_year")
     private Integer birthYear;
 
-    @Column(name = "biography", columnDefinition = "TEXT")
-    private String biography;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private UserRole role;
 
-    @ManyToMany(mappedBy = "authors")
-    private Set<Book> books = new HashSet<>();
+    @Column(name = "username", unique = true)
+    private String username;
+
+    @Column(name = "password")
+    private String password;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -41,5 +47,7 @@ public class Author {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-}
 
+    @OneToOne(mappedBy = "takenByUser", fetch = FetchType.LAZY)
+    private Book takenBook;
+}

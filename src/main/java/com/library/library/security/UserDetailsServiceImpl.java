@@ -1,7 +1,7 @@
 package com.library.library.security;
 
-import com.library.library.entity.User;
-import com.library.library.repository.UserRepository;
+import com.library.library.dao.entity.User;
+import com.library.library.dao.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,17 +1,20 @@
-package com.library.library.service;
+package com.library.library.service.impl;
 
 import com.library.library.dto.BookDto;
-import com.library.library.entity.Author;
-import com.library.library.entity.Book;
-import com.library.library.entity.User;
+import com.library.library.dao.entity.Author;
+import com.library.library.dao.entity.Book;
+import com.library.library.dao.entity.User;
 import com.library.library.exception.ConflictException;
+import com.library.library.exception.ForbiddenException;
 import com.library.library.exception.NotFoundException;
 import com.library.library.mapper.BookMapper;
-import com.library.library.repository.AuthorRepository;
-import com.library.library.repository.BookRepository;
-import com.library.library.repository.UserRepository;
+import com.library.library.dao.repository.AuthorRepository;
+import com.library.library.dao.repository.BookRepository;
+import com.library.library.dao.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,26 +85,38 @@ public class BookService {
     }
 
     @Transactional
-    public BookDto takeBook(Long bookId, Long userId) {
+    public BookDto takeBook(Long bookId, Authentication authentication) {
         Book book = findById(bookId);
         if (book.getTakenByUser() != null) {
             throw new ConflictException("Книга уже занята");
         }
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Пользователь не найден: " + userId));
+        User user = currentUser(authentication);
         book.setTakenByUser(user);
         book.setTakenAt(LocalDateTime.now());
         return BookMapper.toDto(bookRepository.save(book));
     }
 
     @Transactional
-    public BookDto returnBook(Long bookId) {
+    public BookDto returnBook(Long bookId, Authentication authentication) {
         Book book = findById(bookId);
         if (book.getTakenByUser() == null) {
             throw new ConflictException("Книга и так свободна");
         }
+        User user = currentUser(authentication);
+        boolean isOwner = book.getTakenByUser().getId().equals(user.getId());
+        boolean isEditor = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch("ROLE_EDITOR"::equals);
+        if (!isOwner && !isEditor) {
+            throw new ForbiddenException("Книга взята другим пользователем");
+        }
         book.setTakenByUser(null);
         book.setTakenAt(null);
         return BookMapper.toDto(bookRepository.save(book));
+    }
+
+    private User currentUser(Authentication authentication) {
+        return userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден: " + authentication.getName()));
     }
 }

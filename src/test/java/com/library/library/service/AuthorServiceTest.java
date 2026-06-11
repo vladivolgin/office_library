@@ -1,9 +1,10 @@
 package com.library.library.service;
+import com.library.library.service.impl.AuthorService;
 
 import com.library.library.dto.AuthorDto;
-import com.library.library.entity.Author;
+import com.library.library.dao.entity.Author;
 import com.library.library.exception.NotFoundException;
-import com.library.library.repository.AuthorRepository;
+import com.library.library.dao.repository.AuthorRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

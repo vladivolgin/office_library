@@ -1,4 +1,4 @@
-package com.library.library.entity;
+package com.library.library.common;
 
 public enum UserRole {
     READER,

@@ -1,4 +1,4 @@
-package com.library.library.entity;
+package com.library.library.dao.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

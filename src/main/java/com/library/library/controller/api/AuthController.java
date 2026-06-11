@@ -1,8 +1,8 @@
-package com.library.library.controller;
+package com.library.library.controller.api;
 
 import com.library.library.dto.RegisterDto;
 import com.library.library.dto.UserDto;
-import com.library.library.service.AuthService;
+import com.library.library.service.impl.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

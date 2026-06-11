@@ -1,5 +1,6 @@
 package com.library.library.exception;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -11,6 +12,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 
+@Slf4j // (Lombok) — генерирует поле log для класса.
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -31,6 +33,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex) {
+        log.warn("Доступ запрещён: {}", ex.getMessage()); // log.warn(...) при AccessDeniedException (403).
         return build(HttpStatus.FORBIDDEN, "Доступ запрещён: требуется роль EDITOR");
     }
 
@@ -58,6 +61,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneric(Exception ex) {
+        log.error("Необработанная ошибка", ex); // log.error("Необработанная ошибка", ex) при любом непойманном исключении (500).
         return build(HttpStatus.INTERNAL_SERVER_ERROR, "Внутренняя ошибка сервера");
     }
 

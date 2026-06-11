@@ -2,7 +2,7 @@ package com.library.library.mapper;
 
 import com.library.library.dto.AuthorDto;
 import com.library.library.dto.BookDto;
-import com.library.library.entity.Book;
+import com.library.library.dao.entity.Book;
 
 import java.util.Set;
 import java.util.stream.Collectors;

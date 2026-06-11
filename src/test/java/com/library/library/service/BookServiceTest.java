@@ -1,20 +1,26 @@
 package com.library.library.service;
+import com.library.library.service.impl.BookService;
 
 import com.library.library.dto.BookDto;
-import com.library.library.entity.Book;
-import com.library.library.entity.User;
+import com.library.library.dao.entity.Book;
+import com.library.library.dao.entity.User;
 import com.library.library.exception.ConflictException;
+import com.library.library.exception.ForbiddenException;
 import com.library.library.exception.NotFoundException;
-import com.library.library.repository.AuthorRepository;
-import com.library.library.repository.BookRepository;
-import com.library.library.repository.UserRepository;
+import com.library.library.dao.repository.AuthorRepository;
+import com.library.library.dao.repository.BookRepository;
+import com.library.library.dao.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,6 +56,14 @@ class BookServiceTest {
 
         user = new User();
         user.setId(2L);
+        user.setUsername("reader");
+    }
+
+    private Authentication authFor(String username, String... roles) {
+        List<SimpleGrantedAuthority> authorities = List.of(roles).stream()
+                .map(SimpleGrantedAuthority::new)
+                .toList();
+        return new UsernamePasswordAuthenticationToken(username, null, authorities);
     }
 
     @Test
@@ -74,10 +88,10 @@ class BookServiceTest {
     @Test
     void takeBook_marksBookAsTaken_whenAvailable() {
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-        when(userRepository.findById(2L)).thenReturn(Optional.of(user));
+        when(userRepository.findByUsername("reader")).thenReturn(Optional.of(user));
         when(bookRepository.save(any(Book.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        BookDto result = bookService.takeBook(1L, 2L);
+        BookDto result = bookService.takeBook(1L, authFor("reader", "ROLE_READER"));
 
         assertThat(result.takenByUserId()).isEqualTo(2L);
         assertThat(result.takenAt()).isNotNull();
@@ -88,29 +102,60 @@ class BookServiceTest {
         book.setTakenByUser(user);
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
 
-        assertThatThrownBy(() -> bookService.takeBook(1L, 2L))
+        assertThatThrownBy(() -> bookService.takeBook(1L, authFor("reader", "ROLE_READER")))
                 .isInstanceOf(ConflictException.class);
 
         verify(bookRepository, never()).save(any());
     }
 
     @Test
-    void returnBook_clearsTakenInfo_whenBookIsTaken() {
+    void returnBook_clearsTakenInfo_whenOwnerReturns() {
         book.setTakenByUser(user);
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
+        when(userRepository.findByUsername("reader")).thenReturn(Optional.of(user));
         when(bookRepository.save(any(Book.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        BookDto result = bookService.returnBook(1L);
+        BookDto result = bookService.returnBook(1L, authFor("reader", "ROLE_READER"));
 
         assertThat(result.takenByUserId()).isNull();
         assertThat(result.takenAt()).isNull();
     }
 
     @Test
+    void returnBook_clearsTakenInfo_whenEditorReturnsForAnotherUser() {
+        book.setTakenByUser(user);
+        User editor = new User();
+        editor.setId(99L);
+        editor.setUsername("editor");
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
+        when(userRepository.findByUsername("editor")).thenReturn(Optional.of(editor));
+        when(bookRepository.save(any(Book.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        BookDto result = bookService.returnBook(1L, authFor("editor", "ROLE_EDITOR"));
+
+        assertThat(result.takenByUserId()).isNull();
+    }
+
+    @Test
+    void returnBook_throwsForbidden_whenAnotherReaderTries() {
+        book.setTakenByUser(user);
+        User otherReader = new User();
+        otherReader.setId(77L);
+        otherReader.setUsername("other");
+        when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
+        when(userRepository.findByUsername("other")).thenReturn(Optional.of(otherReader));
+
+        assertThatThrownBy(() -> bookService.returnBook(1L, authFor("other", "ROLE_READER")))
+                .isInstanceOf(ForbiddenException.class);
+
+        verify(bookRepository, never()).save(any());
+    }
+
+    @Test
     void returnBook_throwsConflict_whenBookAlreadyFree() {
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
 
-        assertThatThrownBy(() -> bookService.returnBook(1L))
+        assertThatThrownBy(() -> bookService.returnBook(1L, authFor("reader", "ROLE_READER")))
                 .isInstanceOf(ConflictException.class);
     }
 }

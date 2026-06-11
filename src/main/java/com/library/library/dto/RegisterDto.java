@@ -1,6 +1,6 @@
 package com.library.library.dto;
 
-import com.library.library.entity.UserRole;
+import com.library.library.common.UserRole;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -21,6 +21,9 @@ public record RegisterDto(
         @NotNull(message = "Год рождения обязателен")
         Integer birthYear,
 
+        // Поле есть в DTO, т.к. AuthService.register() общий для /api и /web,
+        // но из формы регистрации (register.jsp) всегда приходит скрытое
+        // значение READER — пользователь не может выдать себе роль EDITOR.
         @NotNull(message = "Роль обязательна")
         UserRole role
 ) {}

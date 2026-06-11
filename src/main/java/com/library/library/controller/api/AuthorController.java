@@ -1,7 +1,7 @@
-package com.library.library.controller;
+package com.library.library.controller.api;
 
 import com.library.library.dto.AuthorDto;
-import com.library.library.service.AuthorService;
+import com.library.library.service.impl.AuthorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

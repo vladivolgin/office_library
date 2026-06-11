@@ -1,10 +1,10 @@
-package com.library.library.service;
+package com.library.library.service.impl;
 
 import com.library.library.dto.AuthorDto;
-import com.library.library.entity.Author;
+import com.library.library.dao.entity.Author;
 import com.library.library.exception.NotFoundException;
 import com.library.library.mapper.AuthorMapper;
-import com.library.library.repository.AuthorRepository;
+import com.library.library.dao.repository.AuthorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;

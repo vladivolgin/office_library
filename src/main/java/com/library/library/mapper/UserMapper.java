@@ -2,8 +2,8 @@ package com.library.library.mapper;
 
 import com.library.library.dto.UserBookDto;
 import com.library.library.dto.UserDto;
-import com.library.library.entity.Book;
-import com.library.library.entity.User;
+import com.library.library.dao.entity.Book;
+import com.library.library.dao.entity.User;
 
 public class UserMapper {
     private UserMapper() {}

@@ -1,7 +1,7 @@
-package com.library.library.controller;
+package com.library.library.controller.api;
 
 import com.library.library.dto.UserDto;
-import com.library.library.service.UserService;
+import com.library.library.service.impl.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

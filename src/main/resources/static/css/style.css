@@ -1,0 +1,437 @@
+:root {
+    --primary: #2c5f8a;
+    --primary-dark: #1f4666;
+    --bg: #f4f6f8;
+    --card-bg: #ffffff;
+    --border: #e0e4e8;
+    --text: #2a2f36;
+    --muted: #6b7785;
+    --free: #1a8a4a;
+    --taken: #c0392b;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+}
+
+header.app-header {
+    background: var(--primary);
+    color: #fff;
+    padding: 0 1.5em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+header.app-header .brand {
+    font-size: 1.3em;
+    font-weight: 700;
+    padding: 0.9em 0;
+}
+
+header.app-header nav {
+    display: flex;
+    gap: 0.5em;
+}
+
+header.app-header nav a {
+    color: #e6eef5;
+    text-decoration: none;
+    padding: 1em 0.9em;
+    font-weight: 500;
+    border-bottom: 3px solid transparent;
+    transition: all 0.15s ease;
+}
+
+header.app-header nav a:hover {
+    background: var(--primary-dark);
+    color: #fff;
+}
+
+header.app-header nav a.active {
+    border-bottom-color: #fff;
+    color: #fff;
+}
+
+header.app-header .user-box {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+}
+
+header.app-header .user-box span {
+    opacity: 0.9;
+    font-size: 0.95em;
+}
+
+header.app-header .user-box form button {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.4);
+    padding: 0.4em 0.9em;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+
+header.app-header .user-box form button:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+main {
+    max-width: 1100px;
+    margin: 2em auto;
+    padding: 0 1.5em;
+}
+
+h1 {
+    margin-top: 0;
+    color: var(--primary-dark);
+}
+
+/* Карточки со статистикой на главной */
+.stats {
+    display: flex;
+    gap: 1em;
+    flex-wrap: wrap;
+    margin: 1.5em 0;
+}
+
+.stat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.2em 1.8em;
+    flex: 1;
+    min-width: 160px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.stat-card .value {
+    font-size: 2em;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.stat-card .label {
+    color: var(--muted);
+    margin-top: 0.3em;
+}
+
+.section-links {
+    display: flex;
+    gap: 1em;
+    margin-top: 1em;
+}
+
+.section-links a {
+    display: block;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.2em 1.5em;
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 600;
+    flex: 1;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.section-links a:hover {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+}
+
+.section-links a .desc {
+    display: block;
+    font-weight: 400;
+    color: var(--muted);
+    margin-top: 0.4em;
+    font-size: 0.9em;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.6em 1.2em;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: var(--primary-dark);
+}
+
+.form-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5em;
+    margin-top: 1.5em;
+    max-width: 480px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.form-card .field {
+    margin-bottom: 1.2em;
+}
+
+.form-card label {
+    display: block;
+    margin-bottom: 0.4em;
+    font-weight: 500;
+    color: var(--muted);
+}
+
+.form-card input,
+.form-card textarea,
+.form-card select {
+    width: 100%;
+    padding: 0.6em 0.8em;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 1em;
+    font-family: inherit;
+}
+
+.form-card button {
+    padding: 0.7em 1.4em;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.form-card button:hover {
+    background: var(--primary-dark);
+}
+
+.inline-form {
+    display: flex;
+    gap: 0.5em;
+    align-items: center;
+}
+
+.inline-form select {
+    padding: 0.3em 0.5em;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+.inline-form button {
+    padding: 0.3em 0.8em;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85em;
+}
+
+.inline-form button:hover {
+    background: var(--primary-dark);
+}
+
+/* Таблица книг */
+.table-wrap {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 1.5em;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    padding: 0.7em 1em;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+
+th {
+    background: #eef2f6;
+    color: var(--primary-dark);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8em;
+    letter-spacing: 0.05em;
+}
+
+tbody tr:hover {
+    background: #f9fbfd;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.25em 0.7em;
+    border-radius: 999px;
+    font-size: 0.85em;
+    font-weight: 600;
+}
+
+.badge.free {
+    background: #e6f6ec;
+    color: var(--free);
+}
+
+.badge.taken {
+    background: #fbeae8;
+    color: var(--taken);
+}
+
+.genre-tag {
+    background: #eef2f6;
+    color: var(--primary-dark);
+    padding: 0.15em 0.6em;
+    border-radius: 4px;
+    font-size: 0.85em;
+}
+
+/* Карточки авторов */
+.authors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.2em;
+    margin-top: 1.5em;
+}
+
+.author-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.2em 1.4em;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.author-card h2 {
+    margin: 0 0 0.2em;
+    font-size: 1.2em;
+    color: var(--primary-dark);
+}
+
+.author-card .meta {
+    color: var(--muted);
+    font-size: 0.9em;
+    margin-bottom: 0.6em;
+}
+
+.author-card p {
+    margin: 0 0 0.8em;
+    line-height: 1.4;
+}
+
+.author-card ul {
+    margin: 0;
+    padding-left: 1.2em;
+}
+
+.author-card .works-title {
+    font-weight: 600;
+    font-size: 0.9em;
+    color: var(--primary-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* Форма логина */
+.login-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.login-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 2.5em;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+.login-card h1 {
+    text-align: center;
+    margin-bottom: 1em;
+}
+
+.login-card .field {
+    margin-bottom: 1.2em;
+}
+
+.login-card label {
+    display: block;
+    margin-bottom: 0.4em;
+    font-weight: 500;
+    color: var(--muted);
+}
+
+.login-card input {
+    width: 100%;
+    padding: 0.6em 0.8em;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+.login-card button {
+    width: 100%;
+    padding: 0.7em;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.login-card button:hover {
+    background: var(--primary-dark);
+}
+
+.alert {
+    padding: 0.7em 1em;
+    border-radius: 4px;
+    margin-bottom: 1em;
+    font-size: 0.9em;
+}
+
+.alert.error {
+    background: #fbeae8;
+    color: var(--taken);
+}
+
+.alert.success {
+    background: #e6f6ec;
+    color: var(--free);
+}

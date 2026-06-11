@@ -1,7 +1,7 @@
 package com.library.library.mapper;
 
 import com.library.library.dto.AuthorDto;
-import com.library.library.entity.Author;
+import com.library.library.dao.entity.Author;
 
 public class AuthorMapper {
     private AuthorMapper() {}

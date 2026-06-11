@@ -1,10 +1,11 @@
-package com.library.library.controller;
+package com.library.library.controller.api;
 
 import com.library.library.dto.BookDto;
-import com.library.library.service.BookService;
+import com.library.library.service.impl.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
@@ -55,12 +56,12 @@ public class BookController {
     }
 
     @PostMapping("/{bookId}/take")
-    public BookDto takeBook(@PathVariable Long bookId, @RequestParam Long userId) {
-        return bookService.takeBook(bookId, userId);
+    public BookDto takeBook(@PathVariable Long bookId, Authentication authentication) {
+        return bookService.takeBook(bookId, authentication);
     }
 
     @PostMapping("/{bookId}/return")
-    public BookDto returnBook(@PathVariable Long bookId) {
-        return bookService.returnBook(bookId);
+    public BookDto returnBook(@PathVariable Long bookId, Authentication authentication) {
+        return bookService.returnBook(bookId, authentication);
     }
 }

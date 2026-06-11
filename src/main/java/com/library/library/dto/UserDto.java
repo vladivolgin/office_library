@@ -1,6 +1,6 @@
 package com.library.library.dto;
 
-import com.library.library.entity.UserRole;
+import com.library.library.common.UserRole;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
