@@ -14,6 +14,10 @@
 <main>
     <h1>Пользователи</h1>
 
+    <c:if test="${conflictError != null}">
+        <div class="alert error">${conflictError}</div>
+    </c:if>
+
     <div class="table-wrap">
         <table>
             <thead>

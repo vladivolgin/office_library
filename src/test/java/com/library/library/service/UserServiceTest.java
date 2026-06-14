@@ -4,6 +4,7 @@ import com.library.library.service.impl.UserService;
 import com.library.library.dto.UserDto;
 import com.library.library.dao.entity.User;
 import com.library.library.common.UserRole;
+import com.library.library.exception.ConflictException;
 import com.library.library.exception.NotFoundException;
 import com.library.library.dao.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,6 +60,30 @@ class UserServiceTest {
         assertThat(result.fullName()).isEqualTo("Пётр Петров");
         assertThat(result.birthYear()).isEqualTo(1985);
         assertThat(result.role()).isEqualTo(UserRole.EDITOR);
+    }
+
+    @Test
+    void updateRole_throwsConflict_whenDemotingLastEditor() {
+        user.setRole(UserRole.EDITOR);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.countByRole(UserRole.EDITOR)).thenReturn(1L);
+
+        assertThatThrownBy(() -> userService.updateRole(1L, UserRole.READER))
+                .isInstanceOf(ConflictException.class);
+
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    void updateRole_allowsDemotion_whenAnotherEditorExists() {
+        user.setRole(UserRole.EDITOR);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.countByRole(UserRole.EDITOR)).thenReturn(2L);
+        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        UserDto result = userService.updateRole(1L, UserRole.READER);
+
+        assertThat(result.role()).isEqualTo(UserRole.READER);
     }
 
     @Test

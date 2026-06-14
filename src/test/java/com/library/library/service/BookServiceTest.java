@@ -9,7 +9,6 @@ import com.library.library.exception.ForbiddenException;
 import com.library.library.exception.NotFoundException;
 import com.library.library.dao.repository.AuthorRepository;
 import com.library.library.dao.repository.BookRepository;
-import com.library.library.dao.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,9 +36,6 @@ class BookServiceTest {
     @Mock
     private AuthorRepository authorRepository;
 
-    @Mock
-    private UserRepository userRepository;
-
     @InjectMocks
     private BookService bookService;
 
@@ -59,11 +55,11 @@ class BookServiceTest {
         user.setUsername("reader");
     }
 
-    private Authentication authFor(String username, String... roles) {
+    private Authentication authFor(User principal, String... roles) {
         List<SimpleGrantedAuthority> authorities = List.of(roles).stream()
                 .map(SimpleGrantedAuthority::new)
                 .toList();
-        return new UsernamePasswordAuthenticationToken(username, null, authorities);
+        return new UsernamePasswordAuthenticationToken(principal, null, authorities);
     }
 
     @Test
@@ -88,10 +84,9 @@ class BookServiceTest {
     @Test
     void takeBook_marksBookAsTaken_whenAvailable() {
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-        when(userRepository.findByUsername("reader")).thenReturn(Optional.of(user));
         when(bookRepository.save(any(Book.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        BookDto result = bookService.takeBook(1L, authFor("reader", "ROLE_READER"));
+        BookDto result = bookService.takeBook(1L, authFor(user, "ROLE_READER"));
 
         assertThat(result.takenByUserId()).isEqualTo(2L);
         assertThat(result.takenAt()).isNotNull();
@@ -102,7 +97,7 @@ class BookServiceTest {
         book.setTakenByUser(user);
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
 
-        assertThatThrownBy(() -> bookService.takeBook(1L, authFor("reader", "ROLE_READER")))
+        assertThatThrownBy(() -> bookService.takeBook(1L, authFor(user, "ROLE_READER")))
                 .isInstanceOf(ConflictException.class);
 
         verify(bookRepository, never()).save(any());
@@ -112,10 +107,9 @@ class BookServiceTest {
     void returnBook_clearsTakenInfo_whenOwnerReturns() {
         book.setTakenByUser(user);
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-        when(userRepository.findByUsername("reader")).thenReturn(Optional.of(user));
         when(bookRepository.save(any(Book.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        BookDto result = bookService.returnBook(1L, authFor("reader", "ROLE_READER"));
+        BookDto result = bookService.returnBook(1L, authFor(user, "ROLE_READER"));
 
         assertThat(result.takenByUserId()).isNull();
         assertThat(result.takenAt()).isNull();
@@ -128,10 +122,9 @@ class BookServiceTest {
         editor.setId(99L);
         editor.setUsername("editor");
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-        when(userRepository.findByUsername("editor")).thenReturn(Optional.of(editor));
         when(bookRepository.save(any(Book.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        BookDto result = bookService.returnBook(1L, authFor("editor", "ROLE_EDITOR"));
+        BookDto result = bookService.returnBook(1L, authFor(editor, "ROLE_EDITOR"));
 
         assertThat(result.takenByUserId()).isNull();
     }
@@ -143,9 +136,8 @@ class BookServiceTest {
         otherReader.setId(77L);
         otherReader.setUsername("other");
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-        when(userRepository.findByUsername("other")).thenReturn(Optional.of(otherReader));
 
-        assertThatThrownBy(() -> bookService.returnBook(1L, authFor("other", "ROLE_READER")))
+        assertThatThrownBy(() -> bookService.returnBook(1L, authFor(otherReader, "ROLE_READER")))
                 .isInstanceOf(ForbiddenException.class);
 
         verify(bookRepository, never()).save(any());
@@ -155,7 +147,7 @@ class BookServiceTest {
     void returnBook_throwsConflict_whenBookAlreadyFree() {
         when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
 
-        assertThatThrownBy(() -> bookService.returnBook(1L, authFor("reader", "ROLE_READER")))
+        assertThatThrownBy(() -> bookService.returnBook(1L, authFor(user, "ROLE_READER")))
                 .isInstanceOf(ConflictException.class);
     }
 }

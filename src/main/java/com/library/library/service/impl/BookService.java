@@ -10,7 +10,6 @@ import com.library.library.exception.NotFoundException;
 import com.library.library.mapper.BookMapper;
 import com.library.library.dao.repository.AuthorRepository;
 import com.library.library.dao.repository.BookRepository;
-import com.library.library.dao.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -27,7 +26,6 @@ public class BookService {
 
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
-    private final UserRepository userRepository;
 
     public List<BookDto> findAll() {
         return bookRepository.findAll().stream()
@@ -90,7 +88,7 @@ public class BookService {
         if (book.getTakenByUser() != null) {
             throw new ConflictException("Книга уже занята");
         }
-        User user = currentUser(authentication);
+        User user = (User) authentication.getPrincipal();
         book.setTakenByUser(user);
         book.setTakenAt(LocalDateTime.now());
         return BookMapper.toDto(bookRepository.save(book));
@@ -102,7 +100,7 @@ public class BookService {
         if (book.getTakenByUser() == null) {
             throw new ConflictException("Книга и так свободна");
         }
-        User user = currentUser(authentication);
+        User user = (User) authentication.getPrincipal();
         boolean isOwner = book.getTakenByUser().getId().equals(user.getId());
         boolean isEditor = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -113,10 +111,5 @@ public class BookService {
         book.setTakenByUser(null);
         book.setTakenAt(null);
         return BookMapper.toDto(bookRepository.save(book));
-    }
-
-    private User currentUser(Authentication authentication) {
-        return userRepository.findByUsername(authentication.getName())
-                .orElseThrow(() -> new NotFoundException("Пользователь не найден: " + authentication.getName()));
     }
 }

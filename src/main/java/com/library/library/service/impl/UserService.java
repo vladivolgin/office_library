@@ -2,6 +2,7 @@ package com.library.library.service.impl;
 
 import com.library.library.dto.UserDto;
 import com.library.library.dao.entity.User;
+import com.library.library.exception.ConflictException;
 import com.library.library.exception.NotFoundException;
 import com.library.library.mapper.UserMapper;
 import com.library.library.common.UserRole;
@@ -42,6 +43,7 @@ public class UserService {
     @Transactional
     public UserDto update(Long id, UserDto dto) {
         User user = findById(id);
+        checkLastEditorDemotion(user, dto.role());
         user.setFullName(dto.fullName());
         user.setBirthYear(dto.birthYear());
         user.setRole(dto.role());
@@ -53,8 +55,19 @@ public class UserService {
     @Transactional
     public UserDto updateRole(Long id, UserRole role) {
         User user = findById(id);
+        checkLastEditorDemotion(user, role);
         user.setRole(role);
         return UserMapper.toDto(userRepository.save(user));
+    }
+
+    // Запрещаем понижать роль последнего EDITOR — иначе никто больше
+    // не сможет управлять ролями/книгами/авторами через веб-интерфейс.
+    private void checkLastEditorDemotion(User user, UserRole newRole) {
+        if (user.getRole() == UserRole.EDITOR
+                && newRole != UserRole.EDITOR
+                && userRepository.countByRole(UserRole.EDITOR) <= 1) {
+            throw new ConflictException("Невозможно понизить роль: должен остаться хотя бы один EDITOR");
+        }
     }
 
     // Удалить пользователя

@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/web")
@@ -105,8 +106,14 @@ public class WebController {
     }
 
     @PostMapping("/users/{id}/role")
-    public String updateUserRole(@PathVariable Long id, @RequestParam UserRole role) {
-        userService.updateRole(id, role);
+    public String updateUserRole(@PathVariable Long id, @RequestParam UserRole role,
+                                  RedirectAttributes redirectAttributes) {
+        try {
+            userService.updateRole(id, role);
+        } catch (ConflictException e) {
+            // Например, попытка понизить последнего EDITOR — показываем сообщение на /web/users
+            redirectAttributes.addFlashAttribute("conflictError", e.getMessage());
+        }
         return "redirect:/web/users";
     }
 
