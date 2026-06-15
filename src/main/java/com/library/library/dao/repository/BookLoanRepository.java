@@ -20,4 +20,6 @@ public interface BookLoanRepository extends JpaRepository<BookLoan, Long> {
     // Количество выдач (рейтинг популярности) по каждой книге
     @Query("select bl.book.id, count(bl) from BookLoan bl group by bl.book.id")
     List<Object[]> countLoansGroupedByBookId();
+
+    boolean existsByUserId(Long userId);
 }

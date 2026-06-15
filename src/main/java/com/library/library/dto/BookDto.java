@@ -28,5 +28,5 @@ public record BookDto(
         Set<AuthorDto> authors,
         Long takenByUserId,
         LocalDateTime takenAt,
-        long loanCount
+        Long loanCount
 ) {}

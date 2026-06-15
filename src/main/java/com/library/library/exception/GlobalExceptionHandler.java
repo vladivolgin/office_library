@@ -13,7 +13,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 
 
 @Slf4j // (Lombok) — генерирует поле log для класса.
-@RestControllerAdvice
+// Ограничено пакетом api: иначе перехватывает исключения и у WebController (JSP),
+// возвращая JSON вместо HTML-страницы ошибки.
+@RestControllerAdvice(basePackages = "com.library.library.controller.api")
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)

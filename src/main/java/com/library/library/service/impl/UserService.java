@@ -6,6 +6,7 @@ import com.library.library.exception.ConflictException;
 import com.library.library.exception.NotFoundException;
 import com.library.library.mapper.UserMapper;
 import com.library.library.common.UserRole;
+import com.library.library.dao.repository.BookLoanRepository;
 import com.library.library.dao.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,6 +20,7 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final BookLoanRepository bookLoanRepository;
 
     // Получить всех пользователей
     public List<UserDto> findAll() {
@@ -88,9 +90,19 @@ public class UserService {
     }
 
     // Удалить пользователя
+    @PreAuthorize("hasRole('EDITOR')")
     @Transactional
     public void delete(Long id) {
-        findById(id);
+        User user = findById(id);
+        if (user.getTakenBook() != null) {
+            throw new ConflictException("Невозможно удалить пользователя: на нём числится книга");
+        }
+        if (bookLoanRepository.existsByUserId(id)) {
+            throw new ConflictException("Невозможно удалить пользователя: есть история выдачи книг");
+        }
+        if (user.getRole() == UserRole.EDITOR && userRepository.countByRole(UserRole.EDITOR) <= 1) {
+            throw new ConflictException("Невозможно удалить пользователя: должен остаться хотя бы один EDITOR");
+        }
         userRepository.deleteById(id);
     }
 }

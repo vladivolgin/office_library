@@ -44,6 +44,7 @@
                 <label for="birthYear">Год рождения</label>
                 <form:input path="birthYear" id="birthYear" type="number"/>
                 <form:errors path="birthYear" cssClass="alert error"/>
+                <form:errors path="ageValid" cssClass="alert error"/>
             </div>
             <%-- Роль фиксирована: пользователь не может выдать себе EDITOR через регистрацию --%>
             <input type="hidden" name="role" value="READER"/>

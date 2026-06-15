@@ -1,12 +1,14 @@
 package com.library.library.dto;
 
 import com.library.library.common.UserRole;
-import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+
+import java.time.Year;
 
 public record RegisterDto(
         @NotBlank(message = "Логин не может быть пустым")
@@ -24,7 +26,6 @@ public record RegisterDto(
 
         @NotNull(message = "Год рождения обязателен")
         @Min(value = 1900, message = "Год рождения не может быть раньше 1900")
-        @Max(value = 2025, message = "Год рождения не может быть в будущем")
         Integer birthYear,
 
         // Поле есть в DTO, т.к. AuthService.register() общий для /api и /web,
@@ -32,4 +33,9 @@ public record RegisterDto(
         // значение READER — пользователь не может выдать себе роль EDITOR.
         @NotNull(message = "Роль обязательна")
         UserRole role
-) {}
+) {
+    @AssertTrue(message = "Регистрация доступна только с 14 лет")
+    public boolean isAgeValid() {
+        return birthYear == null || birthYear <= Year.now().getValue() - 14;
+    }
+}

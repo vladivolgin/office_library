@@ -1,6 +1,5 @@
 package com.library.library.dto;
 
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 
@@ -11,7 +10,6 @@ public record AuthorBookDto(
         String title,
 
         @Min(value = 1000, message = "Год публикации не может быть раньше 1000")
-        @Max(value = 2025, message = "Год публикации не может быть в будущем")
         Integer publishYear,
 
         @Size(max = 50, message = "Жанр не может быть длиннее 50 символов")
