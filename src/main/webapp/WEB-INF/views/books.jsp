@@ -58,7 +58,14 @@
                                     <option value="">Свободна</option>
                                     <c:forEach var="u" items="${users}">
                                         <option value="${u.id}" ${u.id == book.takenByUserId() ? 'selected' : ''}>
-                                            <c:out value="${u.fullName}"/>
+                                            <c:choose>
+                                                <c:when test="${u.role == 'EDITOR'}">
+                                                    <c:out value="${u.username}"/>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <c:out value="${u.fullName}"/>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </option>
                                     </c:forEach>
                                 </select>
@@ -66,14 +73,25 @@
                             </form>
                         </sec:authorize>
                         <sec:authorize access="!hasRole('EDITOR')">
-                            <c:choose>
-                                <c:when test="${book.takenByUserId() != null}">
-                                    <span class="badge taken">Занята</span>
-                                </c:when>
-                                <c:otherwise>
-                                    <span class="badge free">Свободна</span>
-                                </c:otherwise>
-                            </c:choose>
+                            <div class="row-actions">
+                                <c:choose>
+                                    <c:when test="${book.takenByUserId() == null}">
+                                        <span class="badge free">Свободна</span>
+                                        <form method="post" action="${pageContext.request.contextPath}/web/books/${book.id()}/take" class="inline-form">
+                                            <button type="submit" class="btn-sm">Взять</button>
+                                        </form>
+                                    </c:when>
+                                    <c:when test="${book.takenByUserId() == currentUserId}">
+                                        <span class="badge taken">У вас</span>
+                                        <form method="post" action="${pageContext.request.contextPath}/web/books/${book.id()}/return" class="inline-form">
+                                            <button type="submit" class="btn-sm">Вернуть</button>
+                                        </form>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span class="badge taken">Занята</span>
+                                    </c:otherwise>
+                                </c:choose>
+                            </div>
                         </sec:authorize>
                     </td>
                     <td>${book.loanCount()}</td>
@@ -82,9 +100,12 @@
                     </td>
                     <sec:authorize access="hasRole('EDITOR')">
                         <td>
-                            <form method="post" action="${pageContext.request.contextPath}/web/books/${book.id()}/delete" class="inline-form" onsubmit="return confirm('Удалить эту книгу?');">
-                                <button type="submit" class="btn-danger">Удалить</button>
-                            </form>
+                            <div class="row-actions">
+                                <a class="btn btn-sm" href="${pageContext.request.contextPath}/web/books/${book.id()}/edit">Редактировать</a>
+                                <form method="post" action="${pageContext.request.contextPath}/web/books/${book.id()}/delete" class="inline-form" onsubmit="return confirm('Удалить эту книгу?');">
+                                    <button type="submit" class="btn-danger">Удалить</button>
+                                </form>
+                            </div>
                         </td>
                     </sec:authorize>
                 </tr>

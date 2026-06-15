@@ -33,9 +33,12 @@
                     </c:forEach>
                 </ul>
                 <sec:authorize access="hasRole('EDITOR')">
-                    <form method="post" action="${pageContext.request.contextPath}/web/authors/${author.id}/delete" class="inline-form" onsubmit="return confirm('Удалить этого автора?');">
-                        <button type="submit" class="btn-danger">Удалить</button>
-                    </form>
+                    <div class="row-actions">
+                        <a class="btn btn-sm" href="${pageContext.request.contextPath}/web/authors/${author.id}/edit">Редактировать</a>
+                        <form method="post" action="${pageContext.request.contextPath}/web/authors/${author.id}/delete" class="inline-form" onsubmit="return confirm('Удалить этого автора?');">
+                            <button type="submit" class="btn-danger">Удалить</button>
+                        </form>
+                    </div>
                 </sec:authorize>
             </div>
         </c:forEach>

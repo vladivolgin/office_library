@@ -24,8 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -92,6 +94,18 @@ public class BookService {
         book.setTitle(dto.title());
         book.setPublishYear(dto.publishYear());
         book.setGenre(dto.genre());
+        return BookMapper.toDto(bookRepository.save(book));
+    }
+
+    // Полностью заменяет набор авторов книги (используется формой редактирования)
+    @PreAuthorize("hasRole('EDITOR')")
+    @Transactional
+    public BookDto updateAuthors(Long id, List<Long> authorIds) {
+        Book book = findById(id);
+        Set<Author> authors = authorIds == null || authorIds.isEmpty()
+                ? new HashSet<>()
+                : new HashSet<>(authorRepository.findAllById(authorIds));
+        book.setAuthors(authors);
         return BookMapper.toDto(bookRepository.save(book));
     }
 

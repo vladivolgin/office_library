@@ -13,14 +13,15 @@
 <%@ include file="common/header.jsp" %>
 
 <main>
-    <h1>Добавить книгу</h1>
+    <h1>${editMode ? 'Редактировать книгу' : 'Добавить книгу'}</h1>
 
     <c:if test="${conflictError != null}">
         <div class="alert error">${conflictError}</div>
     </c:if>
 
     <div class="form-card">
-        <form:form modelAttribute="bookDto" method="post" action="${pageContext.request.contextPath}/web/books/new">
+        <form:form modelAttribute="bookDto" method="post"
+                    action="${editMode ? pageContext.request.contextPath.concat('/web/books/').concat(bookId).concat('/edit') : pageContext.request.contextPath.concat('/web/books/new')}">
             <div class="field">
                 <label for="title">Название</label>
                 <form:input path="title" id="title"/>
@@ -54,7 +55,11 @@
             {id: ${author.id}, name: "<c:out value="${author.fullName}" escapeXml="true"/>"}<c:if test="${!status.last}">,</c:if>
             </c:forEach>
         ];
-        var selectedIds = [];
+        var selectedIds = [
+            <c:forEach var="author" items="${bookDto.authors()}" varStatus="status">
+            ${author.id()}<c:if test="${!status.last}">,</c:if>
+            </c:forEach>
+        ];
 
         var searchInput = document.getElementById('authorSearch');
         var dropdown = document.getElementById('authorDropdown');
@@ -131,6 +136,8 @@
                 dropdown.style.display = 'none';
             }
         });
+
+        renderChips();
     })();
 </script>
 </body>

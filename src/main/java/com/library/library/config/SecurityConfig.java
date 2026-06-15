@@ -31,7 +31,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/web/login", "/web/register", "/css/**", "/js/**", "/WEB-INF/**").permitAll()
                         .requestMatchers("/web/users/**", "/web/books/new", "/web/authors/new",
-                                "/web/books/*/delete", "/web/authors/*/delete").hasRole("EDITOR")
+                                "/web/books/*/delete", "/web/authors/*/delete",
+                                "/web/books/*/edit", "/web/authors/*/edit").hasRole("EDITOR")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

@@ -7,6 +7,7 @@ import com.library.library.dto.RegisterDto;
 import com.library.library.common.UserRole;
 import com.library.library.dao.entity.User;
 import com.library.library.exception.ConflictException;
+import com.library.library.exception.ForbiddenException;
 import com.library.library.exception.NotFoundException;
 import com.library.library.dao.repository.AuthorRepository;
 import com.library.library.dao.repository.BookRepository;
@@ -92,10 +93,32 @@ public class WebController {
 
     @GetMapping("/books")
     public String books(Model model, Authentication authentication) {
+        User currentUser = (User) authentication.getPrincipal();
         model.addAttribute("username", authentication.getName());
         model.addAttribute("books", bookService.findAll());
         model.addAttribute("users", userRepository.findAll());
+        model.addAttribute("currentUserId", currentUser.getId());
         return "books";
+    }
+
+    @PostMapping("/books/{id}/take")
+    public String takeBook(@PathVariable Long id, Authentication authentication, RedirectAttributes redirectAttributes) {
+        try {
+            bookService.takeBook(id, authentication);
+        } catch (ConflictException e) {
+            redirectAttributes.addFlashAttribute("conflictError", e.getMessage());
+        }
+        return "redirect:/web/books";
+    }
+
+    @PostMapping("/books/{id}/return")
+    public String returnBook(@PathVariable Long id, Authentication authentication, RedirectAttributes redirectAttributes) {
+        try {
+            bookService.returnBook(id, authentication);
+        } catch (ConflictException | ForbiddenException e) {
+            redirectAttributes.addFlashAttribute("conflictError", e.getMessage());
+        }
+        return "redirect:/web/books";
     }
 
     @PostMapping("/books/{id}/availability")
@@ -181,6 +204,34 @@ public class WebController {
         return "redirect:/web/books";
     }
 
+    @GetMapping("/books/{id}/edit")
+    public String editBookForm(@PathVariable Long id, Model model, Authentication authentication) {
+        model.addAttribute("username", authentication.getName());
+        model.addAttribute("authors", authorRepository.findAll());
+        if (!model.containsAttribute("bookDto")) {
+            model.addAttribute("bookDto", bookService.findByIdDto(id));
+        }
+        model.addAttribute("editMode", true);
+        model.addAttribute("bookId", id);
+        return "book-form";
+    }
+
+    @PostMapping("/books/{id}/edit")
+    public String updateBook(@PathVariable Long id, @Valid @ModelAttribute("bookDto") BookDto dto, BindingResult bindingResult,
+                              @RequestParam(value = "authorIds", required = false) List<Long> authorIds,
+                              Model model, Authentication authentication) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("username", authentication.getName());
+            model.addAttribute("authors", authorRepository.findAll());
+            model.addAttribute("editMode", true);
+            model.addAttribute("bookId", id);
+            return "book-form";
+        }
+        bookService.update(id, dto);
+        bookService.updateAuthors(id, authorIds);
+        return "redirect:/web/books";
+    }
+
     @GetMapping("/authors/new")
     public String newAuthorForm(Model model, Authentication authentication) {
         model.addAttribute("username", authentication.getName());
@@ -202,6 +253,31 @@ public class WebController {
             return "author-form";
         }
         authorService.create(dto);
+        return "redirect:/web/authors";
+    }
+
+    @GetMapping("/authors/{id}/edit")
+    public String editAuthorForm(@PathVariable Long id, Model model, Authentication authentication) {
+        model.addAttribute("username", authentication.getName());
+        if (!model.containsAttribute("authorDto")) {
+            AuthorDto author = authorService.findByIdDto(id);
+            model.addAttribute("authorDto", new AuthorDto(author.id(), author.fullName(), author.birthYear(), author.biography(), List.of()));
+        }
+        model.addAttribute("editMode", true);
+        model.addAttribute("authorId", id);
+        return "author-form";
+    }
+
+    @PostMapping("/authors/{id}/edit")
+    public String updateAuthor(@PathVariable Long id, @Valid @ModelAttribute("authorDto") AuthorDto dto, BindingResult bindingResult,
+                                Model model, Authentication authentication) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("username", authentication.getName());
+            model.addAttribute("editMode", true);
+            model.addAttribute("authorId", id);
+            return "author-form";
+        }
+        authorService.update(id, dto);
         return "redirect:/web/authors";
     }
 

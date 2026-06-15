@@ -342,6 +342,18 @@ h1 {
     background: var(--primary-dark);
 }
 
+.row-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    align-items: center;
+}
+
+.btn-sm {
+    padding: 0.35em 0.8em;
+    font-size: 0.9em;
+}
+
 .btn-danger {
     background: var(--taken) !important;
 }
@@ -428,7 +440,7 @@ tbody tr:hover {
     box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 
-.author-card form {
+.author-card .row-actions {
     margin-top: auto;
     padding-top: 1em;
     align-self: flex-start;

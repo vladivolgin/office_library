@@ -13,10 +13,11 @@
 <%@ include file="common/header.jsp" %>
 
 <main>
-    <h1>Добавить автора</h1>
+    <h1>${editMode ? 'Редактировать автора' : 'Добавить автора'}</h1>
 
     <div class="form-card">
-        <form:form modelAttribute="authorDto" method="post" action="${pageContext.request.contextPath}/web/authors/new">
+        <form:form modelAttribute="authorDto" method="post"
+                    action="${editMode ? pageContext.request.contextPath.concat('/web/authors/').concat(authorId).concat('/edit') : pageContext.request.contextPath.concat('/web/authors/new')}">
             <div class="field">
                 <label for="fullName">ФИО</label>
                 <form:input path="fullName" id="fullName"/>
@@ -32,6 +33,7 @@
                 <form:textarea path="biography" id="biography" rows="4"/>
                 <form:errors path="biography" cssClass="alert error"/>
             </div>
+            <c:if test="${!editMode}">
             <div class="field">
                 <label>Произведения</label>
                 <c:forEach var="i" begin="0" end="${authorDto.books().size() - 1}">
@@ -45,6 +47,7 @@
                     <form:errors path="books[${i}].genre" cssClass="alert error"/>
                 </c:forEach>
             </div>
+            </c:if>
             <button type="submit">Сохранить</button>
         </form:form>
     </div>
