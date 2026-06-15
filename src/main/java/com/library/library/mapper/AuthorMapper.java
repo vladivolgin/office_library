@@ -7,7 +7,7 @@ public class AuthorMapper {
     private AuthorMapper() {}
 
     public static AuthorDto toDto(Author a) {
-        return new AuthorDto(a.getId(), a.getFullName(), a.getBirthYear(), a.getBiography());
+        return new AuthorDto(a.getId(), a.getFullName(), a.getBirthYear(), a.getBiography(), null);
     }
 
     public static Author toEntity(AuthorDto dto) {

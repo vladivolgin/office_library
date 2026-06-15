@@ -1,13 +1,17 @@
 package com.library.library.dto;
 
 import com.library.library.common.UserRole;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record RegisterDto(
         @NotBlank(message = "Логин не может быть пустым")
         @Size(min = 3, max = 50, message = "Логин должен быть от 3 до 50 символов")
+        @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "Логин может содержать только латинские буквы, цифры и подчёркивание")
         String username,
 
         @NotBlank(message = "Пароль не может быть пустым")
@@ -19,6 +23,8 @@ public record RegisterDto(
         String fullName,
 
         @NotNull(message = "Год рождения обязателен")
+        @Min(value = 1900, message = "Год рождения не может быть раньше 1900")
+        @Max(value = 2025, message = "Год рождения не может быть в будущем")
         Integer birthYear,
 
         // Поле есть в DTO, т.к. AuthService.register() общий для /api и /web,

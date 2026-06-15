@@ -17,7 +17,7 @@
         <h2>Регистрация</h2>
 
         <c:if test="${conflictError != null}">
-            <div class="alert error">${conflictError}</div>
+            <div class="alert error"><c:out value="${conflictError}"/></div>
         </c:if>
 
         <%-- form:form сам подставляет CSRF-токен, поэтому ручной hidden-инпут ниже не нужен.

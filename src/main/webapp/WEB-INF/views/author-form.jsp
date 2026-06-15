@@ -32,6 +32,19 @@
                 <form:textarea path="biography" id="biography" rows="4"/>
                 <form:errors path="biography" cssClass="alert error"/>
             </div>
+            <div class="field">
+                <label>Произведения</label>
+                <c:forEach var="i" begin="0" end="${authorDto.books().size() - 1}">
+                    <div class="field-row">
+                        <form:input path="books[${i}].title" placeholder="Название произведения"/>
+                        <form:input path="books[${i}].publishYear" type="number" placeholder="Год публикации"/>
+                        <form:input path="books[${i}].genre" placeholder="Жанр"/>
+                    </div>
+                    <form:errors path="books[${i}].title" cssClass="alert error"/>
+                    <form:errors path="books[${i}].publishYear" cssClass="alert error"/>
+                    <form:errors path="books[${i}].genre" cssClass="alert error"/>
+                </c:forEach>
+            </div>
             <button type="submit">Сохранить</button>
         </form:form>
     </div>

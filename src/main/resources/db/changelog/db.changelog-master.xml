@@ -10,5 +10,8 @@
     <include file="db/changelog/migrations/003-create-books.xml"/>
     <include file="db/changelog/migrations/004-create-book-authors.xml"/>
     <include file="db/changelog/migrations/005-add-user-credentials.xml"/>
+    <include file="db/changelog/migrations/006-add-user-enabled.xml"/>
+    <include file="db/changelog/migrations/007-create-book-loans.xml"/>
+    <include file="db/changelog/migrations/008-backfill-book-loans.xml"/>
 
 </databaseChangeLog>

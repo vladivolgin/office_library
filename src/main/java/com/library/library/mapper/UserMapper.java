@@ -19,7 +19,8 @@ public class UserMapper {
                 u.getFullName(),
                 u.getBirthYear(),
                 u.getRole(),
-                takenBook
+                takenBook,
+                u.isEnabled()
         );
     }
 

@@ -18,5 +18,7 @@ public record UserDto(
         @NotNull(message = "Роль обязательна")
         UserRole role,
 
-        UserBookDto takenBook
+        UserBookDto takenBook,
+
+        boolean enabled
 ) {}

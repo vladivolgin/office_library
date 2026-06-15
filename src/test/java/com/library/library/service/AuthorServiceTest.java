@@ -49,7 +49,7 @@ class AuthorServiceTest {
 
     @Test
     void create_savesAuthor() {
-        AuthorDto dto = new AuthorDto(null, "Лев Толстой", 1828, "Русский писатель");
+        AuthorDto dto = new AuthorDto(null, "Лев Толстой", 1828, "Русский писатель", null);
         when(authorRepository.save(any(Author.class))).thenReturn(author);
 
         AuthorDto result = authorService.create(dto);
@@ -60,7 +60,7 @@ class AuthorServiceTest {
 
     @Test
     void update_updatesFields() {
-        AuthorDto dto = new AuthorDto(null, "Антон Чехов", 1860, "Драматург");
+        AuthorDto dto = new AuthorDto(null, "Антон Чехов", 1860, "Драматург", null);
         when(authorRepository.findById(1L)).thenReturn(Optional.of(author));
         when(authorRepository.save(any(Author.class))).thenAnswer(inv -> inv.getArgument(0));
 
@@ -77,7 +77,7 @@ class AuthorServiceTest {
 
         authorService.delete(1L);
 
-        verify(authorRepository).deleteById(1L);
+        verify(authorRepository).delete(author);
     }
 
     @Test

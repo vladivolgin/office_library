@@ -51,7 +51,7 @@ class UserServiceTest {
 
     @Test
     void update_updatesFields() {
-        UserDto dto = new UserDto(null, "Пётр Петров", 1985, UserRole.EDITOR, null);
+        UserDto dto = new UserDto(null, "Пётр Петров", 1985, UserRole.EDITOR, null, true);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
 

@@ -214,6 +214,54 @@ h1 {
     font-family: inherit;
 }
 
+.author-dropdown {
+    display: none;
+    position: relative;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-top: 0.3em;
+    max-height: 180px;
+    overflow-y: auto;
+    background: #fff;
+}
+
+.author-dropdown-item {
+    padding: 0.5em 0.8em;
+    cursor: pointer;
+}
+
+.author-dropdown-item:hover {
+    background: var(--bg-alt, #f0f0f0);
+}
+
+.author-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4em;
+    margin-top: 0.6em;
+}
+
+.author-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 16px;
+    padding: 0.3em 0.4em 0.3em 0.8em;
+    font-size: 0.9em;
+}
+
+.author-chip-remove {
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1.1em;
+    line-height: 1;
+    padding: 0 0.3em;
+}
+
 .form-card button {
     padding: 0.7em 1.4em;
     background: var(--primary);
@@ -226,6 +274,45 @@ h1 {
 }
 
 .form-card button:hover {
+    background: var(--primary-dark);
+}
+
+.availability-form {
+    display: flex;
+    gap: 0.4em;
+    align-items: center;
+}
+
+.availability-form select {
+    padding: 0.35em 0.5em;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 0.9em;
+    min-width: 150px;
+    background: #fff;
+}
+
+.availability-form select.is-taken {
+    border-color: var(--taken);
+    color: var(--taken);
+}
+
+.availability-form select.is-free {
+    border-color: var(--free);
+    color: var(--free);
+}
+
+.availability-form button {
+    padding: 0.35em 0.6em;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.availability-form button:hover {
     background: var(--primary-dark);
 }
 
@@ -255,12 +342,20 @@ h1 {
     background: var(--primary-dark);
 }
 
+.btn-danger {
+    background: var(--taken) !important;
+}
+
+.btn-danger:hover {
+    background: #b13a2e !important;
+}
+
 /* Таблица книг */
 .table-wrap {
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: 8px;
-    overflow: hidden;
+    overflow-x: auto;
     margin-top: 1.5em;
     box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
@@ -324,11 +419,19 @@ tbody tr:hover {
 }
 
 .author-card {
+    display: flex;
+    flex-direction: column;
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 1.2em 1.4em;
     box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.author-card form {
+    margin-top: auto;
+    padding-top: 1em;
+    align-self: flex-start;
 }
 
 .author-card h2 {
@@ -420,8 +523,10 @@ tbody tr:hover {
 }
 
 .alert {
+    display: block;
     padding: 0.7em 1em;
     border-radius: 4px;
+    margin-top: 0.4em;
     margin-bottom: 1em;
     font-size: 0.9em;
 }

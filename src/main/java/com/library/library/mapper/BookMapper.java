@@ -11,6 +11,10 @@ public class BookMapper {
     private BookMapper() {}
 
     public static BookDto toDto(Book b) {
+        return toDto(b, 0L);
+    }
+
+    public static BookDto toDto(Book b, long loanCount) {
         Set<AuthorDto> authors = b.getAuthors() == null ? Set.of() :
                 b.getAuthors().stream()
                         .map(AuthorMapper::toDto)
@@ -23,7 +27,8 @@ public class BookMapper {
                 b.getGenre(),
                 authors,
                 b.getTakenByUser() != null ? b.getTakenByUser().getId() : null,
-                b.getTakenAt()
+                b.getTakenAt(),
+                loanCount
         );
     }
 

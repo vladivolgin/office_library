@@ -1,5 +1,7 @@
 package com.library.library.dto;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -15,6 +17,8 @@ public record BookDto(
         String title,
 
         @NotNull(message = "Год публикации обязателен")
+        @Min(value = 1000, message = "Год публикации не может быть раньше 1000")
+        @Max(value = 2025, message = "Год публикации не может быть в будущем")
         Integer publishYear,
 
         @NotBlank(message = "Жанр не может быть пустым")
@@ -23,5 +27,6 @@ public record BookDto(
 
         Set<AuthorDto> authors,
         Long takenByUserId,
-        LocalDateTime takenAt
+        LocalDateTime takenAt,
+        long loanCount
 ) {}

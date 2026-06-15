@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="008-backfill-book-loans" author="dev">
+        <!-- Для книг, уже находящихся на руках, создаём открытую запись в истории выдач -->
+        <sql>
+            INSERT INTO book_loans (book_id, user_id, taken_at, returned_at, created_at, updated_at)
+            SELECT id, taken_by_user_id, COALESCE(taken_at, NOW()), NULL, NOW(), NOW()
+            FROM books
+            WHERE taken_by_user_id IS NOT NULL;
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

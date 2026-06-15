@@ -1,10 +1,13 @@
 package com.library.library.dto;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
+import java.util.List;
 
 public record AuthorDto(
         Long id,
@@ -19,5 +22,10 @@ public record AuthorDto(
         Integer birthYear,
 
         @Size(max = 1000, message = "Биография не может быть длиннее 1000 символов")
-        String biography
+        String biography,
+
+        // Произведения, добавляемые вместе с автором (форма добавления автора).
+        // Пустые строки игнорируются при сохранении.
+        @Valid
+        List<AuthorBookDto> books
 ) {}

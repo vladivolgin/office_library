@@ -1,10 +1,13 @@
 package com.library.library.controller;
 
+import com.library.library.dto.AuthorBookDto;
 import com.library.library.dto.AuthorDto;
 import com.library.library.dto.BookDto;
 import com.library.library.dto.RegisterDto;
 import com.library.library.common.UserRole;
+import com.library.library.dao.entity.User;
 import com.library.library.exception.ConflictException;
+import com.library.library.exception.NotFoundException;
 import com.library.library.dao.repository.AuthorRepository;
 import com.library.library.dao.repository.BookRepository;
 import com.library.library.dao.repository.UserRepository;
@@ -25,6 +28,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/web")
@@ -80,6 +86,7 @@ public class WebController {
         model.addAttribute("bookCount", bookRepository.count());
         model.addAttribute("authorCount", authorRepository.count());
         model.addAttribute("userCount", userRepository.count());
+        model.addAttribute("topBooks", bookService.findAll().stream().limit(5).toList());
         return "dashboard";
     }
 
@@ -87,7 +94,28 @@ public class WebController {
     public String books(Model model, Authentication authentication) {
         model.addAttribute("username", authentication.getName());
         model.addAttribute("books", bookService.findAll());
+        model.addAttribute("users", userRepository.findAll());
         return "books";
+    }
+
+    @PostMapping("/books/{id}/availability")
+    public String setBookAvailability(@PathVariable Long id,
+                                       @RequestParam(value = "userId", required = false) Long userId,
+                                       RedirectAttributes redirectAttributes) {
+        try {
+            bookService.setAvailability(id, userId);
+        } catch (ConflictException | NotFoundException e) {
+            redirectAttributes.addFlashAttribute("conflictError", e.getMessage());
+        }
+        return "redirect:/web/books";
+    }
+
+    @GetMapping("/books/{id}/history")
+    public String bookHistory(@PathVariable Long id, Model model, Authentication authentication) {
+        model.addAttribute("username", authentication.getName());
+        model.addAttribute("book", bookService.findByIdDto(id));
+        model.addAttribute("loans", bookService.findLoanHistory(id));
+        return "book-history";
     }
 
     @GetMapping("/authors")
@@ -120,20 +148,36 @@ public class WebController {
     @GetMapping("/books/new")
     public String newBookForm(Model model, Authentication authentication) {
         model.addAttribute("username", authentication.getName());
+        model.addAttribute("authors", authorRepository.findAll());
         if (!model.containsAttribute("bookDto")) {
-            model.addAttribute("bookDto", new BookDto(null, null, null, null, null, null, null));
+            model.addAttribute("bookDto", new BookDto(null, null, null, null, null, null, null, 0L));
         }
         return "book-form";
     }
 
     @PostMapping("/books/new")
     public String createBook(@Valid @ModelAttribute("bookDto") BookDto dto, BindingResult bindingResult,
+                              @RequestParam(value = "authorIds", required = false) List<Long> authorIds,
                               Model model, Authentication authentication) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("username", authentication.getName());
+            model.addAttribute("authors", authorRepository.findAll());
             return "book-form";
         }
-        bookService.create(dto);
+        BookDto created;
+        try {
+            created = bookService.create(dto);
+        } catch (ConflictException e) {
+            model.addAttribute("username", authentication.getName());
+            model.addAttribute("authors", authorRepository.findAll());
+            model.addAttribute("conflictError", e.getMessage());
+            return "book-form";
+        }
+        if (authorIds != null) {
+            for (Long authorId : authorIds) {
+                bookService.addAuthor(created.id(), authorId);
+            }
+        }
         return "redirect:/web/books";
     }
 
@@ -141,7 +185,11 @@ public class WebController {
     public String newAuthorForm(Model model, Authentication authentication) {
         model.addAttribute("username", authentication.getName());
         if (!model.containsAttribute("authorDto")) {
-            model.addAttribute("authorDto", new AuthorDto(null, null, null, null));
+            List<AuthorBookDto> emptyBooks = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
+                emptyBooks.add(new AuthorBookDto(null, null, null));
+            }
+            model.addAttribute("authorDto", new AuthorDto(null, null, null, null, emptyBooks));
         }
         return "author-form";
     }
@@ -155,5 +203,29 @@ public class WebController {
         }
         authorService.create(dto);
         return "redirect:/web/authors";
+    }
+
+    @PostMapping("/books/{id}/delete")
+    public String deleteBook(@PathVariable Long id) {
+        bookService.delete(id);
+        return "redirect:/web/books";
+    }
+
+    @PostMapping("/authors/{id}/delete")
+    public String deleteAuthor(@PathVariable Long id) {
+        authorService.delete(id);
+        return "redirect:/web/authors";
+    }
+
+    @PostMapping("/users/{id}/enabled")
+    public String setUserEnabled(@PathVariable Long id, @RequestParam boolean enabled,
+                                  Authentication authentication, RedirectAttributes redirectAttributes) {
+        User currentUser = (User) authentication.getPrincipal();
+        try {
+            userService.setEnabled(id, enabled, currentUser.getId());
+        } catch (ConflictException e) {
+            redirectAttributes.addFlashAttribute("conflictError", e.getMessage());
+        }
+        return "redirect:/web/users";
     }
 }

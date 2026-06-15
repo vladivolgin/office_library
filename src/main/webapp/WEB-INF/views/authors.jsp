@@ -23,15 +23,20 @@
     <div class="authors-grid">
         <c:forEach var="author" items="${authors}">
             <div class="author-card">
-                <h2>${author.fullName}</h2>
+                <h2><c:out value="${author.fullName}"/></h2>
                 <div class="meta">Год рождения: ${author.birthYear}</div>
-                <p>${author.biography}</p>
+                <p><c:out value="${author.biography}"/></p>
                 <div class="works-title">Произведения</div>
                 <ul>
                     <c:forEach var="book" items="${author.books}">
-                        <li>${book.title} (${book.publishYear})</li>
+                        <li><c:out value="${book.title}"/> (${book.publishYear})</li>
                     </c:forEach>
                 </ul>
+                <sec:authorize access="hasRole('EDITOR')">
+                    <form method="post" action="${pageContext.request.contextPath}/web/authors/${author.id}/delete" class="inline-form" onsubmit="return confirm('Удалить этого автора?');">
+                        <button type="submit" class="btn-danger">Удалить</button>
+                    </form>
+                </sec:authorize>
             </div>
         </c:forEach>
     </div>

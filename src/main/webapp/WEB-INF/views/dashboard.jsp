@@ -29,6 +29,35 @@
         </div>
     </div>
 
+    <h2>Топ-5 популярных книг</h2>
+    <div class="table-wrap">
+        <table>
+            <thead>
+            <tr>
+                <th>Название</th>
+                <th>Авторы</th>
+                <th>Выдач</th>
+            </tr>
+            </thead>
+            <tbody>
+            <c:forEach var="book" items="${topBooks}">
+                <tr>
+                    <td><c:out value="${book.title()}"/></td>
+                    <td>
+                        <c:forEach var="author" items="${book.authors()}" varStatus="st">
+                            <c:out value="${author.fullName()}"/><c:if test="${!st.last}">, </c:if>
+                        </c:forEach>
+                    </td>
+                    <td>${book.loanCount()}</td>
+                </tr>
+            </c:forEach>
+            <c:if test="${empty topBooks}">
+                <tr><td colspan="3">Книг пока нет</td></tr>
+            </c:if>
+            </tbody>
+        </table>
+    </div>
+
     <div class="section-links">
         <a href="${pageContext.request.contextPath}/web/books">
             Список книг

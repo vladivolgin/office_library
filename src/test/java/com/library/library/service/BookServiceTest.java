@@ -8,7 +8,9 @@ import com.library.library.exception.ConflictException;
 import com.library.library.exception.ForbiddenException;
 import com.library.library.exception.NotFoundException;
 import com.library.library.dao.repository.AuthorRepository;
+import com.library.library.dao.repository.BookLoanRepository;
 import com.library.library.dao.repository.BookRepository;
+import com.library.library.dao.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,6 +37,12 @@ class BookServiceTest {
 
     @Mock
     private AuthorRepository authorRepository;
+
+    @Mock
+    private BookLoanRepository bookLoanRepository;
+
+    @Mock
+    private UserRepository userRepository;
 
     @InjectMocks
     private BookService bookService;
@@ -72,7 +80,7 @@ class BookServiceTest {
 
     @Test
     void create_savesBook() {
-        BookDto dto = new BookDto(null, "Война и мир", 1869, "Роман", null, null, null);
+        BookDto dto = new BookDto(null, "Война и мир", 1869, "Роман", null, null, null, 0L);
         when(bookRepository.save(any(Book.class))).thenReturn(book);
 
         BookDto result = bookService.create(dto);

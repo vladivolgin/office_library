@@ -30,7 +30,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/web/login", "/web/register", "/css/**", "/js/**", "/WEB-INF/**").permitAll()
-                        .requestMatchers("/web/users/**", "/web/books/new", "/web/authors/new").hasRole("EDITOR")
+                        .requestMatchers("/web/users/**", "/web/books/new", "/web/authors/new",
+                                "/web/books/*/delete", "/web/authors/*/delete").hasRole("EDITOR")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

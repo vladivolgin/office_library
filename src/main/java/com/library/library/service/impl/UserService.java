@@ -70,6 +70,23 @@ public class UserService {
         }
     }
 
+    // Блокировка/разблокировка пользователя
+    @PreAuthorize("hasRole('EDITOR')")
+    @Transactional
+    public UserDto setEnabled(Long id, boolean enabled, Long currentUserId) {
+        User user = findById(id);
+        if (!enabled) {
+            if (id.equals(currentUserId)) {
+                throw new ConflictException("Нельзя заблокировать самого себя");
+            }
+            if (user.getRole() == UserRole.EDITOR && userRepository.countByRole(UserRole.EDITOR) <= 1) {
+                throw new ConflictException("Невозможно заблокировать: должен остаться хотя бы один EDITOR");
+            }
+        }
+        user.setEnabled(enabled);
+        return UserMapper.toDto(userRepository.save(user));
+    }
+
     // Удалить пользователя
     @Transactional
     public void delete(Long id) {
